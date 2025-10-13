@@ -1,14 +1,33 @@
+from cparser import parse_c
+import pandas as pd
+import html
+from visualizer import plot_cfg
+
 """
 need to construct and plot a cfg
 get code file, get it in text
-know how to parse it to split into lines, manage strings properly
-store indices too
-keep these originals, create tuples of these too
-remove empty lines, comments
-then get two tuples, lines and their indices
-skip everything inside quotes
-;, \n, ", ', //, /*
-while, for, if, else, else if, match, case, do while
+plug into parse_c from cparser to split into lines
+for(){}
+while(){}
+if(){}
+else{}
+else if (){}
+switch()
+{
+case x:
+pass;
+break;
+case y:
+pass;
+break;
+default:
+pass;
+}
+do
+{
+}
+while()
+;
 find leader lines
 identify basic blocks
 store info in .dot format
@@ -16,69 +35,141 @@ plug into the visualizer.py code
 store number of nodes, edges, cyclomatic complexity
 """
 
-while True:
-    print("Enter file path, enter blank if done processing all files:")
-    file_path = input()
-    if file_path=="":
-        break
+class Node:
+    def __init__(self, id, statements=None):
+        self.id = id
+        self.stmts = statements or []
+        self.nxt = []  # successors
+
+    def add_nxt(self, node):
+        if node.id not in self.nxt:
+            self.nxt.append(node.id)
+
+def generate_cfg(file_path):
     with open(file_path, "r") as fh:
-        raw_string = fh.read()
-    lines = []
-    line_yet = ""
-    for i in range(len(raw_string)): # splitting it into lines, ignoring blanks, ignoring comment only
-        c = raw_string[i]
-        if c=='f' and i+2<len(raw_string) and raw_string[i+1]=='o' and raw_string[i+2]=='r':
-            line_yet+="for" # checking for 'for' because that has ; without it ending line
-            s = []
-            i+=3
-            s.append(raw_string[i])
-            i+=1
-            while i<len(raw_string) and len(s)!=0:
-                if raw_string[i]=='(':
-                    s.append('(')
-                elif raw_string[i]==')':
-                    s.pop()
-                line_yet+=raw_string[i]
-                i+=1
-        elif c==";" or (c=="\\" and raw_string[i+1]=="n"): # newline or ; breaks
-            line_yet.strip()
-            if line_yet!="" and line_yet[0:2]!="//" and line_yet[0:2]!="/*":
-                lines.append(line_yet)
-                line_yet=""
-            i+=1
-        elif c=='"': # processing string so \n inside string doesn't break code
-            line_yet+=c
-            i+=1
-            while i<len(raw_string) and raw_string[i]!='"':
-                line_yet+=raw_string[i]
-                i+=1
-        elif c=="'": # processing char
-            line_yet+=c
-            i+=1
-            while i<len(raw_string) and raw_string[i]!="'":
-                line_yet+=raw_string[i]
-                i+=1
-        elif c=="/": # processing comments
-            if raw_string[i+1]=="/": # single-line
-                while i<len(raw_string) and raw_string[i]!="\\": 
-                    i+=1
-                else:
-                    if i==len(raw_string): break
-                    else: i-=1 # because found a \
-            elif raw_string[i+1]=="*": # multi-line
-                while i<len(raw_string) and raw_string[i:i+2]!="*/":
-                    i+=1
-        i+=1
-    # done splitting it into lines
-    # now need to process lines separately
-    # maybe can start by marking all of them -1, first leader line is 0, next is 1, so on
-    # their corresponding basic blocks can have their number too
-    # store indices of leader lines
-    leaders = []
-    line_blk_ids = []
-    for i in range(len(lines)):
-        line_blk_ids.append(-1)
-    i=0
-    while i<len(lines):
-        if lines[i][0:10]=="int main()":
-            i+=1
+        codestr = fh.read()
+
+    lines = [line.strip() for line in parse_c(codestr) if line.strip()]
+    n = len(lines)
+    if n == 0:
+        return [], []
+
+    nodes = []
+    stack = []  # keeps track of open control blocks
+    node_id = 0
+    curr_block_lines = []
+
+    def new_node(stmts):
+        nonlocal node_id
+        node = Node(node_id, stmts)
+        nodes.append(node)
+        node_id += 1
+        return node
+
+    entry = new_node(["Entry"])  # entry node
+    prev = entry
+
+    i = 0
+    while i < n:
+        line = lines[i]
+
+        # leader lines
+        leader_keywords = ("if(", "while(", "for(", "switch(", "do", "else", "else if(", "break", "return", "case ", "default ")
+        if line.startswith(leader_keywords):
+            if curr_block_lines: # starting new block if current block has lines
+                node = new_node(curr_block_lines)
+                prev.add_nxt(node)
+                prev = node
+                curr_block_lines = []
+
+            if line.startswith(("if(", "while(", "for(", "switch(", "do")):
+                node = new_node([line]) #  new block for the leader
+                prev.add_nxt(node)
+                stack.append(node) # stack for nested structures
+                prev = node
+            elif line.startswith(("else", "else if(")): # else connects to the parent if
+                node = new_node([line])
+                prev.add_nxt(node)
+                if stack and "if(" in stack[-1].stmts[0]:
+                    parent = stack[-1]
+                    parent.add_nxt(node)
+                    stack.append(node)
+                prev = node
+            else: # for case, default
+                curr_block_lines.append(line)
+
+        elif line == "{": pass # ignore, just a block start
+        elif line == "}": # close current block
+            if stack:
+                block = stack.pop() # back edge for loops
+                if block.stmts[0].startswith(("while(", "for(")) or block.stmts[0] == "do":
+                    prev.add_nxt(block)
+            prev = nodes[-1]
+        else: # normal statement, add to current block
+            curr_block_lines.append(line)
+
+        i += 1
+
+    if curr_block_lines: # remaining statements
+        node = new_node(curr_block_lines)
+        prev.add_nxt(node)
+        prev = node
+
+    exit_node = new_node(["Exit"])
+    prev.add_nxt(exit_node)
+
+    edges = [] # build edges
+    for node in nodes:
+        for nxt_id in node.nxt:
+            edges.append((node.id, nxt_id))
+
+    return nodes, edges
+
+
+def write_dot(nodes, edges, out_path="cfg.dot"):
+    with open(out_path, "w", encoding="utf-8") as f:
+        f.write("digraph CFG {\n")
+        for node in nodes:
+            # Escape quotes and backslashes safely
+            label = "\n".join(node.stmts)
+            label = label.replace("\\", "\\\\").replace('"', "'").replace("\"", "\\\"")
+            label = html.escape(label)  # ensures no special chars break syntax
+
+            f.write(f'  {node.id} [label="{label}", shape=box];\n')
+        for u, v in edges:
+            f.write(f'  {u} -> {v};\n')
+        f.write("}\n")
+    print(f"CFG written to {out_path}")
+
+
+def compute_cyclomatic_complexity(nodes, edges):
+    n_nodes = len(nodes)
+    n_edges = len(edges)
+    return n_edges - n_nodes + 2
+
+if __name__ == "__main__":
+    info = {"file_name":[], "num_nodes":[], "num_edges":[], "cyclomatic_complexity":[]}
+    while True:
+        print("Enter file path (blank to exit): ", end="")
+        file_path = input().strip()
+        if file_path == "":
+            break
+
+        nodes, edges = generate_cfg(file_path)
+        for node in nodes:
+            print(f"Node {node.id}: {node.stmts} → {node.nxt}")
+
+        cc = compute_cyclomatic_complexity(nodes, edges)
+        print(f"\nNumber of Nodes: {len(nodes)}")
+        print(f"\nNumber of Edges: {len(edges)}")
+        print(f"\nCyclomatic Complexity: {cc}")
+        filename = list(file_path.split("/"))[-1]
+        info["file_name"].append(filename)
+        info["num_nodes"].append(len(nodes))
+        info["num_edges"].append(len(edges))
+        info["cyclomatic_complexity"].append(cc)
+        filename = filename.rstrip(".c")
+        write_dot(nodes, edges, f"cfg_{filename}.dot")
+        plot_cfg(f"cfg_{filename}.dot")
+    df = pd.DataFrame(info)
+    df.to_csv("metrics.csv", index=False)
