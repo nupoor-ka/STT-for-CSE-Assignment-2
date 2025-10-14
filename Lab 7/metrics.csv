@@ -1,4 +1,4 @@
 file_name,num_nodes,num_edges,cyclomatic_complexity
-bank_account_management.c,81,91,12
-sort_search.c,122,156,36
+bank_account_management.c,77,87,12
 maze_solver.c,215,246,33
+sort_search.c,122,156,36

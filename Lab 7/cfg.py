@@ -75,7 +75,7 @@ def generate_cfg(file_path):
 
         # leader lines
         leader_keywords = ("if(", "while(", "for(", "switch(", "do", "else", "else if(", "break", "return", "case ", "default ")
-        if line.startswith(leader_keywords):
+        if line.startswith(leader_keywords) and not line.startswith("double"):
             if curr_block_lines: # starting new block if current block has lines
                 node = new_node(curr_block_lines)
                 prev.add_nxt(node)
@@ -139,7 +139,7 @@ def write_dot(nodes, edges, out_path="cfg.dot"):
         for u, v in edges:
             f.write(f'  {u} -> {v};\n')
         f.write("}\n")
-    print(f"CFG written to {out_path}")
+    print(f"\ncontrol flow graph nodes and edges written to {out_path}")
 
 
 def compute_cyclomatic_complexity(nodes, edges):
@@ -156,13 +156,13 @@ if __name__ == "__main__":
             break
 
         nodes, edges = generate_cfg(file_path)
-        for node in nodes:
-            print(f"Node {node.id}: {node.stmts} → {node.nxt}")
+        # for node in nodes:
+        #     print(f"Node {node.id}: {node.stmts} → {node.nxt}")
 
         cc = compute_cyclomatic_complexity(nodes, edges)
-        print(f"\nNumber of Nodes: {len(nodes)}")
-        print(f"\nNumber of Edges: {len(edges)}")
-        print(f"\nCyclomatic Complexity: {cc}")
+        print(f"\nnumber of nodes: {len(nodes)}")
+        print(f"\nnumber of edges: {len(edges)}")
+        print(f"\ncyclomatic complexity: {cc}")
         filename = list(file_path.split("/"))[-1]
         info["file_name"].append(filename)
         info["num_nodes"].append(len(nodes))
@@ -171,5 +171,6 @@ if __name__ == "__main__":
         filename = filename.rstrip(".c")
         write_dot(nodes, edges, f"cfg_{filename}.dot")
         plot_cfg(f"cfg_{filename}.dot")
+        print()
     df = pd.DataFrame(info)
     df.to_csv("metrics.csv", index=False)

@@ -78,7 +78,7 @@ def parse_c(codestr):
         keywords = ["for", "if", "else", "while", "do", "switch", "case", "default"]
         matched_kw = None
         for kw in keywords:
-            if codestr.startswith(kw, i) and (i + len(kw) == n or not codestr[i + len(kw)].isalnum()):
+            if codestr.startswith(kw, i) and (i + len(kw) == n or (not codestr[i + len(kw)].isalnum())):
                 matched_kw = kw
                 break
 
@@ -154,21 +154,23 @@ def parse_c(codestr):
                             lines.append(stmt.strip())
 
             elif matched_kw == "do": # do {} while();
-                lines.append("do")
-                i = skip_spaces(i)
-                if i < n and codestr[i] == '{':
-                    lines.append("{")
-                    i += 1
-                else:
-                    stmt = ""
-                    while i < n and codestr[i] not in [';', '{', '}']:
-                        stmt += codestr[i]
+                if(codestr[i]!="u"):
+                    lines.append("do")
+                    i = skip_spaces(i)
+                    if i < n and codestr[i] == '{':
+                        lines.append("{")
                         i += 1
-                    if i < n and codestr[i] == ';':
-                        stmt += ';'
-                        i += 1
-                    if stmt.strip():
-                        lines.append(stmt.strip())
+                    else:
+                        stmt = ""
+                        while i < n and codestr[i] not in [';', '{', '}']:
+                            stmt += codestr[i]
+                            i += 1
+                        if i < n and codestr[i] == ';':
+                            stmt += ';'
+                            i += 1
+                        if stmt.strip():
+                            lines.append(stmt.strip())
+                else: i-=2
 
             elif matched_kw in ["case", "default"]:
                 stmt = matched_kw+" "
