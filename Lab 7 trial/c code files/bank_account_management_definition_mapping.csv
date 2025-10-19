@@ -1,0 +1,9 @@
+DefID,Variable,Node,Statement
+D1,count,1,int count = 0 ;
+D2,choice,1,int choice = -1 ;
+D3,accounts[count].acc_no,11,accounts[count].acc_no = count + 1 ;
+D4,accounts[count].balance,11,accounts[count].balance = 0.0 ;
+D5,accounts[j],21,accounts[j] = accounts[j+1] ;
+D6,src_idx,69,"int src_idx=-1, dest_idx=-1 ;"
+D7,src_idx,73,src_idx = i ;
+D8,dest_idx,76,dest_idx = i ;

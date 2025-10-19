@@ -1,0 +1,175 @@
+DefID,Variable,Node,Statement
+D1,MAXR,1,"const int MAXR = 40, MAXC = 40 ;"
+D2,rows,1,"int rows = 24, cols = 24 ;"
+D3,startR,1,"int startR = 1, startC = 1 ;"
+D4,endR,1,"int endR = 22, endC = 22 ;"
+D5,trace,1,int trace = 0 ;
+D6,maze[i][j],7,maze[i][j] = '#' ;
+D7,maze[i][j],10,maze[i][j] = ((rand() % 100) < 30) ? '#' :
+D8,visited[i][j],11,visited[i][j] = 0 ;
+D9,parentR[i][j],11,parentR[i][j] = -1 ;
+D10,parentC[i][j],11,parentC[i][j] = -1 ;
+D11,maze[startR][startC],13,maze[startR][startC] = 'S' ;
+D12,maze[endR][endC],13,maze[endR][endC] = 'E' ;
+D13,trace,44,trace = !trace ;
+D14,seedChoice,51,seedChoice = 1 ;
+D15,maze[i][j],64,maze[i][j]='#' ;
+D16,maze[i][j],67,maze[i][j] = ((rand()%100) < 35) ? '#' :
+D17,visited[i][j],68,visited[i][j]=0 ;
+D18,parentR[i][j],68,parentR[i][j]=-1 ;
+D19,parentC[i][j],68,parentC[i][j]=-1 ;
+D20,maze[startR][startC],70,maze[startR][startC]='S' ;
+D21,maze[endR][endC],70,maze[endR][endC]='E' ;
+D22,sub,77,sub = 0 ;
+D23,maze[r][c],100,maze[r][c] = (maze[r][c]=='#') ? '.' :
+D24,maze[startR][startC],113,maze[startR][startC] = '.' ;
+D25,startR,113,startR=nr ;
+D26,startC,113,startC=nc ;
+D27,maze[startR][startC],113,maze[startR][startC]='S' ;
+D28,maze[endR][endC],126,maze[endR][endC]='.' ;
+D29,endR,126,endR=nr ;
+D30,endC,126,endC=nc ;
+D31,maze[endR][endC],126,maze[endR][endC]='E' ;
+D32,maze[i][j],133,maze[i][j]='.' ;
+D33,maze[startR][startC],135,maze[startR][startC]='S' ;
+D34,maze[endR][endC],135,maze[endR][endC]='E' ;
+D35,top,144,"int stackR[10000], stackC[10000], top = -1 ;"
+D36,visited[i][j],148,visited[i][j]=0 ;
+D37,parentR[i][j],148,parentR[i][j]=-1 ;
+D38,parentC[i][j],148,parentC[i][j]=-1 ;
+D39,sr,150,"int sr=startR, sc=startC ;"
+D40,visited[sr][sc],150,visited[sr][sc]=1 ;
+D41,stackR[++top],150,stackR[++top]=sr ;
+D42,stackC[top],150,stackC[top]=sc ;
+D43,found,150,"int found=0, nodes=0 ;"
+D44,cr,152,int cr = stackR[top] ;
+D45,cc,152,int cc = stackC[top] ;
+D46,found,157,found=1 ;
+D47,dr[4],160,int dr[4] =
+D48,dc[4],161,int dc[4] =
+D49,nr,164,"int nr = cr + dr[k], nc = cc + dc[k] ;"
+D50,visited[nr][nc],179,visited[nr][nc]=1 ;
+D51,parentR[nr][nc],179,parentR[nr][nc]=cr ;
+D52,parentC[nr][nc],179,parentC[nr][nc]=cc ;
+D53,stackR[++top],179,stackR[++top]=nr ;
+D54,stackC[top],179,stackC[top]=nc ;
+D55,pr,186,"int pr=endR, pc=endC, path=0 ;"
+D56,maze[pr][pc],190,maze[pr][pc]='*' ;
+D57,tr,191,"int tr = parentR[pr][pc], tc = parentC[pr][pc] ;"
+D58,pr,191,pr=tr ;
+D59,pc,191,pc=tc ;
+D60,maze[startR][startC],192,maze[startR][startC]='S' ;
+D61,maze[endR][endC],192,maze[endR][endC]='E' ;
+D62,head,200,"int qR[10000], qC[10000], head=0, tail=0 ;"
+D63,visited[i][j],204,visited[i][j]=0 ;
+D64,parentR[i][j],204,parentR[i][j]=-1 ;
+D65,parentC[i][j],204,parentC[i][j]=-1 ;
+D66,qR[tail],206,qR[tail]=startR ;
+D67,qC[tail],206,qC[tail]=startC ;
+D68,visited[startR][startC],206,visited[startR][startC]=1 ;
+D69,found,206,"int found=0, nodes=0 ;"
+D70,cr,208,"int cr=qR[head], cc=qC[head] ;"
+D71,found,213,found=1 ;
+D72,dr[4],216,int dr[4]=
+D73,dc[4],217,", dc[4]="
+D74,nr,220,"int nr=cr+dr[k], nc=cc+dc[k] ;"
+D75,visited[nr][nc],235,visited[nr][nc]=1 ;
+D76,parentR[nr][nc],235,parentR[nr][nc]=cr ;
+D77,parentC[nr][nc],235,parentC[nr][nc]=cc ;
+D78,qR[tail],235,qR[tail]=nr ;
+D79,qC[tail],235,qC[tail]=nc ;
+D80,pr,241,"int pr=endR, pc=endC, path=0 ;"
+D81,maze[pr][pc],245,maze[pr][pc]='+' ;
+D82,tr,246,"int tr=parentR[pr][pc], tc=parentC[pr][pc] ;"
+D83,pr,246,pr=tr ;
+D84,pc,246,pc=tc ;
+D85,maze[startR][startC],247,maze[startR][startC]='S' ;
+D86,maze[endR][endC],247,maze[endR][endC]='E' ;
+D87,visited[i][j],259,visited[i][j]=0 ;
+D88,parentR[i][j],259,parentR[i][j]=-1 ;
+D89,parentC[i][j],259,parentC[i][j]=-1 ;
+D90,openN,261,int openN=0 ;
+D91,openR[openN],261,openR[openN]=startR ;
+D92,openC[openN],261,openC[openN]=startC ;
+D93,openG[openN],261,openG[openN]=0 ;
+D94,openF[openN],261,openF[openN]=abs(startR-endR)+abs(startC-endC) ;
+D95,closed[i][j],265,closed[i][j]=0 ;
+D96,found,267,"int found=0, nodes=0 ;"
+D97,best,269,int best=0 ;
+D98,best,273,best=i ;
+D99,cr,275,"int cr=openR[best], cc=openC[best], cg=openG[best] ;"
+D100,openR[best],275,openR[best]=openR[openN] ;
+D101,openC[best],275,openC[best]=openC[openN] ;
+D102,openG[best],275,openG[best]=openG[openN] ;
+D103,openF[best],275,openF[best]=openF[openN] ;
+D104,found,280,found=1 ;
+D105,closed[cr][cc],283,closed[cr][cc]=1 ;
+D106,dr[4],283,int dr[4]=
+D107,dc[4],284,", dc[4]="
+D108,nr,287,"int nr=cr+dr[k], nc=cc+dc[k] ;"
+D109,ng,302,int ng = cg+1 ;
+D110,h,302,int h = abs(nr-endR)+abs(nc-endC) ;
+D111,nf,302,int nf = ng + h ;
+D112,inOpen,302,int inOpen=-1 ;
+D113,inOpen,306,inOpen=i ;
+D114,openG[inOpen],314,openG[inOpen]=ng ;
+D115,openF[inOpen],314,openF[inOpen]=nf ;
+D116,parentR[nr][nc],314,parentR[nr][nc]=cr ;
+D117,parentC[nr][nc],314,parentC[nr][nc]=cc ;
+D118,openR[openN],318,openR[openN]=nr ;
+D119,openC[openN],318,openC[openN]=nc ;
+D120,openG[openN],318,openG[openN]=ng ;
+D121,openF[openN],318,openF[openN]=nf ;
+D122,parentR[nr][nc],318,parentR[nr][nc]=cr ;
+D123,parentC[nr][nc],318,parentC[nr][nc]=cc ;
+D124,pr,325,"int pr=endR, pc=endC, path=0 ;"
+D125,maze[pr][pc],329,maze[pr][pc]='A' ;
+D126,tr,330,"int tr=parentR[pr][pc], tc=parentC[pr][pc] ;"
+D127,pr,330,pr=tr ;
+D128,pc,330,pc=tc ;
+D129,maze[startR][startC],331,maze[startR][startC]='S' ;
+D130,maze[endR][endC],331,maze[endR][endC]='E' ;
+D131,walls,339,"int walls=0, empt=0 ;"
+D132,visited[i][j],355,visited[i][j]=0 ;
+D133,h,357,"int qR[10000], qC[10000], h=0, t=0 ;"
+D134,qR[t],357,qR[t]=startR ;
+D135,qC[t],357,qC[t]=startC ;
+D136,visited[startR][startC],357,visited[startR][startC]=1 ;
+D137,reach,357,int reach=0 ;
+D138,cr,359,"int cr=qR[h], cc=qC[h] ;"
+D139,dr[4],359,int dr[4]=
+D140,dc[4],360,", dc[4]="
+D141,nr,363,"int nr=cr+dr[k], nc=cc+dc[k] ;"
+D142,visited[nr][nc],378,visited[nr][nc]=1 ;
+D143,qR[t],378,qR[t]=nr ;
+D144,qC[t],378,qC[t]=nc ;
+D145,visited[i][j],383,visited[i][j]=0 ;
+D146,sp,385,"int stkR[10000], stkC[10000], it[10000], sp=-1, maxD=0, depth=0 ;"
+D147,stkR[sp],385,stkR[sp]=startR ;
+D148,stkC[sp],385,stkC[sp]=startC ;
+D149,it[sp],385,it[sp]=0 ;
+D150,visited[startR][startC],385,visited[startR][startC]=1 ;
+D151,depth,385,depth=1 ;
+D152,cr,387,"int cr=stkR[sp], cc=stkC[sp], itv=it[sp] ;"
+D153,it[sp],392,it[sp] = itv+1 ;
+D154,dr[4],392,int dr[4]=
+D155,dc[4],393,", dc[4]="
+D156,nr,393,"int nr=cr+dr[itv], nc=cc+dc[itv] ;"
+D157,visited[nr][nc],408,visited[nr][nc]=1 ;
+D158,stkR[sp],408,stkR[sp]=nr ;
+D159,stkC[sp],408,stkC[sp]=nc ;
+D160,it[sp],408,it[sp]=0 ;
+D161,maxD,410,maxD=depth ;
+D162,rows,425,rows=nr ;
+D163,cols,425,cols=nc ;
+D164,startR,425,startR=1 ;
+D165,startC,425,startC=1 ;
+D166,endR,425,endR=rows-2 ;
+D167,endC,425,endC=cols-2 ;
+D168,maze[i][j],431,maze[i][j]='#' ;
+D169,maze[i][j],434,maze[i][j] = ((rand()%100) < 35) ? '#' :
+D170,visited[i][j],435,visited[i][j]=0 ;
+D171,parentR[i][j],435,parentR[i][j]=-1 ;
+D172,parentC[i][j],435,parentC[i][j]=-1 ;
+D173,maze[startR][startC],437,maze[startR][startC]='S' ;
+D174,maze[endR][endC],437,maze[endR][endC]='E' ;
